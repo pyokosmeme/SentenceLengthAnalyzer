@@ -52,6 +52,42 @@
             font-weight: 300;
         }
 
+        .tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .tab-button.active {
+            background: #111;
+            color: #fffff8;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .count-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin: 50px 0;
+            padding: 30px 0;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+
+        @media (max-width: 768px) {
+            .count-metrics {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+
         .main-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -263,65 +299,93 @@
             <p class="subtitle">A tool for examining the rhythm and variety of written prose</p>
         </div>
 
-        <div class="main-grid">
-            <div class="section">
-                <div class="section-label">Input</div>
-                <textarea id="inputText" class="text-input" placeholder="Paste your text here to begin..."></textarea>
-                <div class="controls">
-                    <button onclick="loadSampleText()">Sample Text</button>
-                    <button onclick="clearText()">Clear</button>
+        <div class="tabs">
+            <button class="tab-button active" data-tab="visualizerTab">Visualizer</button>
+            <button class="tab-button" data-tab="countTab">Word &amp; Character Count</button>
+        </div>
+
+        <div id="visualizerTab" class="tab-content active">
+            <div class="main-grid">
+                <div class="section">
+                    <div class="section-label">Input</div>
+                    <textarea id="inputText" class="text-input" placeholder="Paste your text here to begin..."></textarea>
+                    <div class="controls">
+                        <button onclick="loadSampleText()">Sample Text</button>
+                        <button onclick="clearText()">Clear</button>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-label">Visualization</div>
+                    <div id="outputDisplay" class="output-display"></div>
                 </div>
             </div>
 
+            <div class="metrics">
+                <div class="metric">
+                    <div class="metric-value" id="totalSentences">0</div>
+                    <div class="metric-label">Sentences</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="shortestSentence">—</div>
+                    <div class="metric-label">Shortest</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="longestSentence">—</div>
+                    <div class="metric-label">Longest</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="averageLength">—</div>
+                    <div class="metric-label">Average</div>
+                </div>
+            </div>
+
+            <div class="legend">
+                <div class="legend-title">Character Length Scale</div>
+                <div class="legend-scale">
+                    <div class="legend-segment" style="background: hsla(270, 80%, 65%, 0.35);"></div>
+                    <div class="legend-segment" style="background: hsla(225, 80%, 65%, 0.35);"></div>
+                    <div class="legend-segment" style="background: hsla(180, 80%, 65%, 0.35);"></div>
+                    <div class="legend-segment" style="background: hsla(135, 80%, 65%, 0.35);"></div>
+                    <div class="legend-segment" style="background: hsla(90, 80%, 65%, 0.35);"></div>
+                    <div class="legend-segment" style="background: hsla(45, 80%, 65%, 0.35);"></div>
+                    <div class="legend-segment" style="background: hsla(0, 80%, 65%, 0.35);"></div>
+                </div>
+                <div class="legend-labels">
+                    <span class="legend-label">10</span>
+                    <span class="legend-label">50</span>
+                    <span class="legend-label">90</span>
+                    <span class="legend-label">130</span>
+                    <span class="legend-label">170</span>
+                    <span class="legend-label">200+</span>
+                </div>
+            </div>
+
+            <div class="footnote">
+                <p><strong>Note:</strong> Each sentence is highlighted according to its character length, creating a visual map of textual rhythm. Short, punchy sentences appear in cool violet tones, while longer, more complex constructions shift toward warm reds.</p>
+                <p>The visualization preserves all original formatting including paragraph breaks and spacing. Hover over any sentence to see its precise character count.</p>
+            </div>
+        </div>
+
+        <div id="countTab" class="tab-content">
             <div class="section">
-                <div class="section-label">Visualization</div>
-                <div id="outputDisplay" class="output-display"></div>
+                <div class="section-label">Text</div>
+                <textarea id="countInput" class="text-input" placeholder="Paste or upload your text..."></textarea>
+                <div class="controls">
+                    <input type="file" id="fileInput" accept=".txt">
+                    <button onclick="clearCountText()">Clear</button>
+                </div>
             </div>
-        </div>
-
-        <div class="metrics">
-            <div class="metric">
-                <div class="metric-value" id="totalSentences">0</div>
-                <div class="metric-label">Sentences</div>
+            <div class="count-metrics">
+                <div class="metric">
+                    <div class="metric-value" id="charCount">0</div>
+                    <div class="metric-label">Characters</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="wordCount">0</div>
+                    <div class="metric-label">Words</div>
+                </div>
             </div>
-            <div class="metric">
-                <div class="metric-value" id="shortestSentence">—</div>
-                <div class="metric-label">Shortest</div>
-            </div>
-            <div class="metric">
-                <div class="metric-value" id="longestSentence">—</div>
-                <div class="metric-label">Longest</div>
-            </div>
-            <div class="metric">
-                <div class="metric-value" id="averageLength">—</div>
-                <div class="metric-label">Average</div>
-            </div>
-        </div>
-
-        <div class="legend">
-            <div class="legend-title">Character Length Scale</div>
-            <div class="legend-scale">
-                <div class="legend-segment" style="background: hsla(270, 80%, 65%, 0.35);"></div>
-                <div class="legend-segment" style="background: hsla(225, 80%, 65%, 0.35);"></div>
-                <div class="legend-segment" style="background: hsla(180, 80%, 65%, 0.35);"></div>
-                <div class="legend-segment" style="background: hsla(135, 80%, 65%, 0.35);"></div>
-                <div class="legend-segment" style="background: hsla(90, 80%, 65%, 0.35);"></div>
-                <div class="legend-segment" style="background: hsla(45, 80%, 65%, 0.35);"></div>
-                <div class="legend-segment" style="background: hsla(0, 80%, 65%, 0.35);"></div>
-            </div>
-            <div class="legend-labels">
-                <span class="legend-label">10</span>
-                <span class="legend-label">50</span>
-                <span class="legend-label">90</span>
-                <span class="legend-label">130</span>
-                <span class="legend-label">170</span>
-                <span class="legend-label">200+</span>
-            </div>
-        </div>
-
-        <div class="footnote">
-            <p><strong>Note:</strong> Each sentence is highlighted according to its character length, creating a visual map of textual rhythm. Short, punchy sentences appear in cool violet tones, while longer, more complex constructions shift toward warm reds.</p>
-            <p>The visualization preserves all original formatting including paragraph breaks and spacing. Hover over any sentence to see its precise character count.</p>
         </div>
     </div>
 
@@ -331,6 +395,22 @@
         const inputText = document.getElementById('inputText');
         const outputDisplay = document.getElementById('outputDisplay');
         const tooltip = document.getElementById('tooltip');
+        const countInput = document.getElementById('countInput');
+        const fileInput = document.getElementById('fileInput');
+        const charCountEl = document.getElementById('charCount');
+        const wordCountEl = document.getElementById('wordCount');
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const target = button.dataset.tab;
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(tab => tab.classList.remove('active'));
+                button.classList.add('active');
+                document.getElementById(target).classList.add('active');
+            });
+        });
 
         // Statistics elements
         const totalSentencesEl = document.getElementById('totalSentences');
@@ -498,11 +578,40 @@ Good prose breathes. It contracts and expands. Quick observations punctuate long
             updateStatistics([]);
         }
 
+        function updateCounts() {
+            const text = countInput.value;
+            charCountEl.textContent = text.length;
+            wordCountEl.textContent = text.trim() ? text.trim().split(/\s+/).length : 0;
+        }
+
+        function clearCountText() {
+            countInput.value = '';
+            fileInput.value = '';
+            updateCounts();
+        }
+
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                countInput.value = event.target.result;
+                updateCounts();
+            };
+            reader.readAsText(file);
+        }
+
+        countInput.addEventListener('input', updateCounts);
+        fileInput.addEventListener('change', handleFileUpload);
+
         // Add input event listener
         inputText.addEventListener('input', highlightText);
 
-        // Load sample text on page load
-        window.addEventListener('DOMContentLoaded', loadSampleText);
+        // Load sample text on page load and init counts
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSampleText();
+            updateCounts();
+        });
     </script>
 </body>
 </html>
